@@ -1,0 +1,397 @@
+/* === GLOBAL / BACKGROUND === */
+body {
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: #6223d2;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  /* Gradient overlay for depth */
+  .overlay {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    /* Adaptive opacity: lighter on smaller screens, heavier on wide/ultrawide */
+    --overlay-alpha: 0.95;
+    background: radial-gradient(circle, transparent 0%, rgb(98 35 210 / var(--overlay-alpha)) 100%);
+    z-index: 1;
+  }
+
+  @media (max-width: 1400px) {
+    .overlay { --overlay-alpha: 0.75; }
+  }
+
+  @media (max-width: 900px) {
+    .overlay { --overlay-alpha: 0.65; }
+  }
+
+  @media (min-width: 2200px) {
+    .overlay { --overlay-alpha: 0.95; }
+  }
+
+  /* Triangle sizing (small by default, scales gently with viewport) */
+  :root {
+    /* width in px; tune these 3 numbers to taste */
+    /* 20% smaller everywhere (scaled from 22/2.2vw/42 -> 17.6/1.76vw/33.6) */
+    --tri-w: clamp(17.6px, 1.76vw, 33.6px);
+    /* keep original aspect ratio: 57.5 / 50 = 1.15 */
+    --tri-h: calc(var(--tri-w) * 1.15);
+  }
+  
+  /* Animated triangles - dynamically sized */
+  .container {
+    display: grid;
+    transform: translate(-3%, -4%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 110%;
+    height: 110%;
+  }
+  
+  .shape {
+    width: var(--tri-w);
+    height: var(--tri-h);
+    -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+  
+  /* === CONTENT AREA === */
+  .content {
+    z-index: 3;
+    text-align: center;
+    color: #fff;
+    max-width: 800px;
+    padding: 20px;
+    perspective: 1000px; /* enables 3D depth for floating elements */
+  }
+  
+  h1 {
+    margin: 0 auto 20px auto;
+    font-size: 7rem;
+    font-family: 'Monoton', cursive;
+    text-transform: uppercase;
+    letter-spacing: 8px;
+    animation: titleCycle 6s linear infinite, floatTitle3D 30s ease-in-out infinite;
+    text-shadow: 0 0 25px hsl(320,100%,75%), 0 0 45px rgba(255,255,255,0.4);
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    width: 100%;
+    text-align: center;
+  }
+  
+  
+  /* Same color cycle as the button's border/text */
+  @keyframes titleCycle {
+    0%   { color: hsl(320,100%,75%); text-shadow: 0 0 25px hsl(320,100%,60%); }
+    25%  { color: hsl(240,100%,75%); text-shadow: 0 0 25px hsl(240,100%,60%); }
+    50%  { color: hsl(160,100%,75%); text-shadow: 0 0 25px hsl(160,100%,60%); }
+    75%  { color: hsl(80,100%,75%);  text-shadow: 0 0 25px hsl(80,100%,60%); }
+    100% { color: hsl(320,100%,75%); text-shadow: 0 0 25px hsl(320,100%,60%); }
+  }
+  
+  /* Floating animation for title - different from video */
+  @keyframes floatTitle3D {
+    0% {
+      transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    }
+    20% {
+      transform: translate3d(-12px, -6px, 5px) rotateX(-3deg) rotateY(5deg) rotateZ(-1deg);
+    }
+    40% {
+      transform: translate3d(-8px, -15px, 0px) rotateX(-5deg) rotateY(-3deg) rotateZ(0.5deg);
+    }
+    60% {
+      transform: translate3d(10px, -10px, 5px) rotateX(3deg) rotateY(-5deg) rotateZ(-0.5deg);
+    }
+    80% {
+      transform: translate3d(8px, -5px, 0px) rotateX(5deg) rotateY(3deg) rotateZ(1deg);
+    }
+    100% {
+      transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    }
+  }
+  
+  /* Make sure it scales well on mobile */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 3.5rem;
+      letter-spacing: 2px;
+    }
+  }
+  .video-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 30px auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px; /* enables 3D depth */
+  }
+  
+  .responsive-iframe {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    z-index: 1;
+    transform-style: preserve-3d;
+  }
+  
+  .responsive-iframe iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+    animation: floatVideo3D 20s linear infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Smooth multidirectional floating & rotation */
+  @keyframes floatVideo3D {
+    0% {
+      transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg);
+    }
+    25% {
+      transform: translate3d(7.65px, -7.65px, 0px) rotateX(5.1deg) rotateY(-5.1deg);
+    }
+    50% {
+      transform: translate3d(0px, -10.2px, 0px) rotateX(0deg) rotateY(0deg);
+    }
+    75% {
+      transform: translate3d(-7.65px, -7.65px, 0px) rotateX(-5.1deg) rotateY(5.1deg);
+    }
+    100% {
+      transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg);
+    }
+  }
+  
+/* === PSYCHEDELIC HOLOGRAPHIC BUTTON === */
+.btn {
+    position: relative;
+    padding: 1rem 6rem;
+    font-size: 3.0rem;
+    font-weight: 800;
+    font-family: 'Monoton', cursive;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.8s ease;
+    border-radius: 12px;
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+  }
+  
+  /* Thicker glowing border */
+  .hologram {
+    border: 1px solid; 
+    background: rgba(150, 50, 255, 0.1);
+    box-shadow: 0 0 25px rgba(200, 100, 255, 0.5);
+    backdrop-filter: blur(3px);
+    animation: borderCycle 6s linear infinite;
+  }
+  
+  /* Intensified holographic effect on hover */
+  .hologram:hover {
+    transform: scale(1.05); /* no scaling the button container */
+    box-shadow: 
+      0 0 50px rgba(255, 150, 255, 1),
+      0 0 100px rgba(200, 100, 255, 0.8),
+      0 0 150px rgba(150, 50, 255, 0.6),
+      inset 0 0 30px rgba(255, 150, 255, 0.3);
+    animation: borderCycle 3s linear infinite; /* faster cycle on hover */
+  }
+  
+  /* Text hover: only enlarge the text smoothly */
+  .hologram span {
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    animation: textCycle 6s linear infinite;
+    transition: transform 0.2s ease; /* smooth scaling */
+  }
+  
+  .hologram:hover span {
+    transform: scale(1.2); /* only text grows */
+    text-shadow: 
+      0 0 30px rgba(255, 255, 255, 1),
+      0 0 50px currentColor,
+      0 0 70px currentColor;
+    animation: textCycle 3s linear infinite; /* faster cycle on hover */
+  }
+
+  /* Animated border hue cycle (matches triangle colors) */
+  @keyframes borderCycle {
+    0% {
+      border-color: hsl(320,100%,70%);
+      box-shadow: 0 0 25px hsl(320,100%,60%);
+    }
+    25% {
+      border-color: hsl(240,100%,70%);
+      box-shadow: 0 0 25px hsl(240,100%,60%);
+    }
+    50% {
+      border-color: hsl(160,100%,70%);
+      box-shadow: 0 0 25px hsl(160,100%,60%);
+    }
+    75% {
+      border-color: hsl(80,100%,70%);
+      box-shadow: 0 0 25px hsl(80,100%,60%);
+    }
+    100% {
+      border-color: hsl(320,100%,70%);
+      box-shadow: 0 0 25px hsl(320,100%,60%);
+    }
+  }
+  
+  /* Color cycle matching the border’s hues */
+  @keyframes textCycle {
+    0%   { color: hsl(320,100%,80%); text-shadow: 0 0 15px hsl(320,100%,70%); }
+    25%  { color: hsl(240,100%,80%); text-shadow: 0 0 15px hsl(240,100%,70%); }
+    50%  { color: hsl(160,100%,80%); text-shadow: 0 0 15px hsl(160,100%,70%); }
+    75%  { color: hsl(80,100%,80%);  text-shadow: 0 0 15px hsl(80,100%,70%); }
+    100% { color: hsl(320,100%,80%); text-shadow: 0 0 15px hsl(320,100%,70%); }
+  }
+  
+  /* Glitch text layers */
+  .hologram span::before,
+  .hologram span::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    filter: blur(1px);
+    transition: all 0.3s ease;
+  }
+  
+  .hologram span::before {
+    top: -2px;
+    color: #ff66ff;
+    transform: translateX(0);
+    animation: glitch 2s infinite;
+  }
+  
+  .hologram span::after {
+    bottom: -2px;
+    color: #b366ff;
+    transform: translateX(0);
+    animation: glitch 2s infinite reverse;
+  }
+  
+  /* Intensified glitch on hover */
+  .hologram:hover span::before,
+  .hologram:hover span::after {
+    filter: blur(2px);
+  }
+  
+  .hologram:hover span::before {
+    animation: glitchIntense 1.5s infinite;
+  }
+  
+  .hologram:hover span::after {
+    animation: glitchIntense 1.5s infinite reverse;
+  }
+  
+  @keyframes glitch {
+    0%, 100% { transform: translateX(0); opacity: 0.3; }
+    20% { transform: translateX(-4px); opacity: 0.5; }
+    40% { transform: translateX(4px); opacity: 0.7; }
+    60% { transform: translateX(-2px); opacity: 0.5; }
+    80% { transform: translateX(2px); opacity: 0.3; }
+  }
+  
+  @keyframes glitchIntense {
+    0%, 100% { transform: translateX(0); opacity: 0.6; }
+    10% { transform: translateX(-8px); opacity: 0.9; }
+    20% { transform: translateX(8px); opacity: 1; }
+    30% { transform: translateX(-6px); opacity: 0.8; }
+    40% { transform: translateX(6px); opacity: 0.9; }
+    50% { transform: translateX(-4px); opacity: 1; }
+    60% { transform: translateX(4px); opacity: 0.8; }
+    70% { transform: translateX(-6px); opacity: 0.9; }
+    80% { transform: translateX(6px); opacity: 0.7; }
+    90% { transform: translateX(-3px); opacity: 0.8; }
+  }
+  
+  /* Mobile optimization */
+  @media (max-width: 480px) {
+    .btn {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+    }
+  }
+  
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* === RESPONSIVE DESIGN === */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.6rem;
+    }
+  
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+    }
+  
+    .content {
+      padding: 10px;
+    }
+  
+    .video-container {
+      max-width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.3rem;
+    }
+  
+    button {
+      padding: 10px 20px;
+      font-size: 15px;
+    }
+  }
+  
+  
