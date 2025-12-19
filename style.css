@@ -205,6 +205,12 @@ body {
     z-index: 2;
     text-transform: uppercase;
     letter-spacing: 6px;
+    /* Keep enclosure stable even if label text changes */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    box-sizing: border-box;
   }
   
   /* Thicker glowing border */
@@ -216,15 +222,17 @@ body {
     animation: borderCycle 6s linear infinite;
   }
   
-  /* Intensified holographic effect on hover */
-  .hologram:hover {
-    transform: scale(1.05); /* no scaling the button container */
-    box-shadow: 
-      0 0 50px rgba(255, 150, 255, 1),
-      0 0 100px rgba(200, 100, 255, 0.8),
-      0 0 150px rgba(150, 50, 255, 0.6),
-      inset 0 0 30px rgba(255, 150, 255, 0.3);
-    animation: borderCycle 3s linear infinite; /* faster cycle on hover */
+  /* Intensified holographic effect on hover (desktop/trackpad only) */
+  @media (hover: hover) and (pointer: fine) {
+    .hologram:hover {
+      transform: scale(1.05); /* no scaling the button container */
+      box-shadow: 
+        0 0 50px rgba(255, 150, 255, 1),
+        0 0 100px rgba(200, 100, 255, 0.8),
+        0 0 150px rgba(150, 50, 255, 0.6),
+        inset 0 0 30px rgba(255, 150, 255, 0.3);
+      animation: borderCycle 3s linear infinite; /* faster cycle on hover */
+    }
   }
   
   /* Text hover: only enlarge the text smoothly */
@@ -236,13 +244,15 @@ body {
     transition: transform 0.2s ease; /* smooth scaling */
   }
   
-  .hologram:hover span {
-    transform: scale(1.2); /* only text grows */
-    text-shadow: 
-      0 0 30px rgba(255, 255, 255, 1),
-      0 0 50px currentColor,
-      0 0 70px currentColor;
-    animation: textCycle 3s linear infinite; /* faster cycle on hover */
+  @media (hover: hover) and (pointer: fine) {
+    .hologram:hover span {
+      transform: scale(1.2); /* only text grows */
+      text-shadow: 
+        0 0 30px rgba(255, 255, 255, 1),
+        0 0 50px currentColor,
+        0 0 70px currentColor;
+      animation: textCycle 3s linear infinite; /* faster cycle on hover */
+    }
   }
 
   /* Animated border hue cycle (matches triangle colors) */
@@ -303,18 +313,20 @@ body {
     animation: glitch 2s infinite reverse;
   }
   
-  /* Intensified glitch on hover */
-  .hologram:hover span::before,
-  .hologram:hover span::after {
-    filter: blur(2px);
-  }
-  
-  .hologram:hover span::before {
-    animation: glitchIntense 1.5s infinite;
-  }
-  
-  .hologram:hover span::after {
-    animation: glitchIntense 1.5s infinite reverse;
+  /* Intensified glitch on hover (desktop/trackpad only) */
+  @media (hover: hover) and (pointer: fine) {
+    .hologram:hover span::before,
+    .hologram:hover span::after {
+      filter: blur(2px);
+    }
+    
+    .hologram:hover span::before {
+      animation: glitchIntense 1.5s infinite;
+    }
+    
+    .hologram:hover span::after {
+      animation: glitchIntense 1.5s infinite reverse;
+    }
   }
   
   @keyframes glitch {

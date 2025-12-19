@@ -300,12 +300,60 @@
       setVideoById(first);
     }
 
+    let voidClickCount = 0;
+    let lockedVoidButtonWidthPx = null;
+
+    function updateVoidButtonLabel() {
+      const btn = document.getElementById("change-video");
+      if (!btn) return;
+      const label = btn.querySelector("span[data-text]");
+      if (!label) return;
+
+      let nextText = "Enter the Void";
+      if (voidClickCount === 1) nextText = "One More";
+      if (voidClickCount >= 2) nextText = "Keep Going";
+
+      label.textContent = nextText;
+      label.setAttribute("data-text", nextText);
+    }
+
+    function lockVoidButtonWidth() {
+      // Lock the button enclosure to the initial "Enter the Void" size (prevents resize on later labels).
+      const btn = document.getElementById("change-video");
+      const label = btn?.querySelector("span[data-text]");
+      if (!btn || !label) return;
+
+      // Only compute once per page load.
+      if (lockedVoidButtonWidthPx == null) {
+        const prevText = label.textContent;
+        const prevData = label.getAttribute("data-text");
+
+        label.textContent = "Enter the Void";
+        label.setAttribute("data-text", "Enter the Void");
+
+        // Force layout, then measure
+        const rect = btn.getBoundingClientRect();
+        lockedVoidButtonWidthPx = Math.ceil(rect.width);
+
+        // Restore
+        label.textContent = prevText ?? "";
+        if (prevData != null) label.setAttribute("data-text", prevData);
+      }
+
+      btn.style.width = `${lockedVoidButtonWidthPx}px`;
+    }
+
     function changeVideo() {
       const iframe = document.getElementById("youtube-player");
       const currentVideoUrl = iframe.src;
       const currentVideoId = currentVideoUrl.split("/").pop().split("?")[0];
       activatePsychedelicEffect();
       const newVideoId = pickNextVideoId(currentVideoId);
+
+      // Update button text after clicks
+      voidClickCount += 1;
+      updateVoidButtonLabel();
+
       setTimeout(() => {
         setVideoById(newVideoId);
       }, 10);
@@ -313,6 +361,8 @@
 
     document.getElementById("change-video").addEventListener("click", changeVideo);
     document.addEventListener("DOMContentLoaded", initRandomVideo);
+    document.addEventListener("DOMContentLoaded", updateVoidButtonLabel);
+    document.addEventListener("DOMContentLoaded", lockVoidButtonWidth);
   </script>
 </body>
 </html>
