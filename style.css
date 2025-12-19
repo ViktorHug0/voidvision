@@ -40,7 +40,8 @@ body {
   :root {
     /* width in px; tune these 3 numbers to taste */
     /* 20% smaller everywhere (scaled from 22/2.2vw/42 -> 17.6/1.76vw/33.6) */
-    --tri-w: clamp(17.6px, 1.76vw, 33.6px);
+    /* 2× bigger */
+    --tri-w: clamp(35.2px, 3.52vw, 67.2px);
     /* keep original aspect ratio: 57.5 / 50 = 1.15 */
     --tri-h: calc(var(--tri-w) * 1.15);
   }
